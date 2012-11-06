@@ -1,30 +1,30 @@
-h1. ZOS gem
+# ZOS gem
 
 A gem to wrap the ZOS SOAP API so it's simple to use
 
-h2. Background
+## Background
 
 Using SOAP can be cumbersome and sometimes reviewing a WSDL file for a new API can be a pain. This wrapper allows you to call methods on a ZOS object instead of using a soap client.
 
 ZOS is a new, but powerful, service and there isn't a nice ruby wrapper for the API so I decided to release this to the public.
 
-h2. Requirements
+## Requirements
 
 * Written in/for Ruby 1.9.3
 * Savon for SOAP
 * Review the ZOS API so you know what methods/arguments are available
 
-h2. Installation
+## Installation
 
 _[Manual]_
 
-# Download this: http://github.com/dkullmann/zos/zipball/master
-# Unzip that download.
-# Copy the zos.rb file into your vendor or lib folder
+* Download this: http://github.com/dkullmann/zos/zipball/master
+* Unzip that download.
+* Copy the zos.rb file into your vendor or lib folder
 
 @todo - gem install
 
-h2. Usage
+## Usage
 
 	zos = ZOS.new(apiKey, apiPasswd, clientId)
 
@@ -35,13 +35,13 @@ h2. Usage
 	landmark_id = zos.add_landmark(options)
 
 
-h2. Todo
+## Todo
 
 * gem install
 * continue adding methods
 * perhaps figure out a pattern to requests/responses so there isn't one method each
 
-h2. License
+## License
 
 Copyright (c) 2012 David Kullmann
 
