@@ -11,7 +11,12 @@ class ZOS
 		@namespaces = {
 			'xmlns:tns' => 'http://tempuri.org/',
 			'xmlns:soapenv' => 'http://schemas.xmlsoap.org/soap/envelope/',
-			'xmlns:wcf' => 'http://schemas.datacontract.org/2004/07/WcfDevice.ZOS.API.Device'
+			'xmlns:wcf' => nil
+		}
+
+		@endpoints = {
+			'device' => 'http://schemas.datacontract.org/2004/07/WcfDevice.ZOS.API.Device',
+			'event'  => 'http://schemas.datacontract.org/2004/07/WcfEvent.ZOS.API.Event'
 		}
 
 		Savon.configure do |config|
@@ -25,6 +30,46 @@ class ZOS
 		Savon.client(sprintf(@uri_template, endpoint))
 	end
 
+	def namespaces(endpoint)
+		@namespaces.merge({ 'xmlns:wcf' => @endpoints[endpoint] })
+	end
+
+	def get_landmark(options={})
+
+		endpoint = 'event'
+
+		client = generate_client(endpoint)
+
+		defaults = {
+			:landmarkType  => 'LandmarkId',
+			:landmarkValue => nil
+		}
+
+		options = @auth.merge(defaults).merge(options)
+
+		namespaces = namespaces(endpoint)
+
+		response = client.request :tns, :get_landmark do
+			soap.xml do |xml|
+			 	xml.soapenv(:Envelope, namespaces) do |xml|
+			    	xml.soapenv(:Body) do |xml|
+			    		xml.tns(:getLandmark) do |xml|
+							xml.tns(:pGetLandmarkInput) do |xml|
+								options.each do |k, v|
+									xml.wcf(k, v)
+								end
+							end
+						end
+			    	end
+				end
+			end
+		end
+
+		puts YAML::dump(response.to_hash)
+		exit
+
+	end
+
 	def add_landmark(options={})
 
 		endpoint = 'event'
@@ -35,7 +80,7 @@ class ZOS
 
 		options = @auth.merge(defaults).merge(options)
 
-		namespaces = @namespaces
+		namespaces = namespaces(endpoint)
 
 		response = client.request :tns, :add_landmark do
 			soap.xml do |xml|
@@ -78,7 +123,7 @@ class ZOS
 
 		options = @auth.merge(defaults).merge(options)
 
-		namespaces = @namespaces
+		namespaces = namespaces(endpoint)
 
 		client.request :tns, :get_device_tree do
 			soap.xml do |xml|
