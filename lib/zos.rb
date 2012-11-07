@@ -65,9 +65,6 @@ class ZOS
 			end
 		end
 
-		puts YAML::dump(response.to_hash)
-		exit
-
 	end
 
 	def add_landmark(options={})
@@ -141,4 +138,43 @@ class ZOS
 			end
 		end
 	end
+
+	def get_device_location_history(options={})
+
+		endpoint = 'device'
+
+		defaults = {
+			:Device_ID => nil,
+			:endTimestamp => nil,
+			:startTimestamp => nil,
+		}
+
+		client = generate_client(endpoint)
+
+		options = @auth.merge(defaults).merge(options)
+
+		namespaces = namespaces(endpoint)
+
+		response = client.request :tns, :get_device_location_history do
+			soap.xml do |xml|
+			 	xml.soapenv(:Envelope, namespaces) do |xml|
+			    	xml.soapenv(:Body) do |xml|
+			    		xml.tns(:getDeviceLocationHistory) do |xml|
+							xml.tns(:pGetDeviceLocationHistoryInput) do |xml|
+								options.each do |k, v|
+									xml.wcf(k, v)
+								end
+							end
+						end
+			    	end
+				end
+			end
+		end
+
+		response = response.to_hash
+
+		# @todo - parse response
+
+	end
+
 end
